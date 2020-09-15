@@ -1,0 +1,1 @@
+# ES-Standalone with minio

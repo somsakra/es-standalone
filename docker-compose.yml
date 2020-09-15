@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  elasticsearch:
+    image: 'somsakra/elasticsearch'    
+    container_name: 'elasticsearch'
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - type: bind
+        source: ./elasticsearch-volume
+        target: /usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - default
+
+  kibana:
+    image: 'kibana:7.8.1'
+    container_name: 'kibana'
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    networks: 
+      - default
+    
+  minio:
+    image: minio/minio
+    container_name: 'minio'
+    environment:
+      - MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+      - MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    volumes:
+      - type: bind
+        source: ./minio-volume
+        target: /data
+    command : server /data
+    ports:
+      - 9000:9000
+    networks: 
+      - default
+
+networks:
+  default:
+    external: 
+      name: elk
